@@ -1,0 +1,24 @@
+{
+    "name": "leandro/img-upload",
+    "description": "Upload de imagens php",
+    "keywords": ["upload"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Leandro",
+            "email": "ilibertsites@gmail.com"
+        }
+    ],
+    "type": "package",
+    "require": {
+		"php": ">=7.0"
+    },
+    "require-dev": {
+		"phpunit/phpunit": "6.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "UploadLeandro\\": "src/"
+        }
+    }
+}
