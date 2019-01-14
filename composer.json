@@ -1,11 +1,11 @@
 {
-    "name": "leandro/img-upload",
+    "name": "kdesignbrasil/img-upload",
     "description": "Upload de imagens php",
     "keywords": ["upload"],
     "license": "MIT",
     "authors": [
         {
-            "name": "Leandro",
+            "name": "Leandro dos Anjos",
             "email": "ilibertsites@gmail.com"
         }
     ],
