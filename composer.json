@@ -9,7 +9,7 @@
             "email": "ilibertsites@gmail.com"
         }
     ],
-    "type": "package",
+    "type": "library",
     "require": {
 		"php": ">=7.0"
     }, 
