@@ -1,12 +1,44 @@
 <?php 
+/**
+ * IMG PHP UPLOAD
+ * PHP Version >=7.0
+ *
+ * @see       https://github.com/kdesignbrasil/img-upload 
+ *
+ * @author    Leandro G. dos Anjos
+ * @author    Kethelyn Cris Pancier    
+ */
 
 namespace UploadLeandro;
 
 class Upload
 {
+    /**
+    * Recebe o(s) arquivo(s) para upload
+    *
+    * @var array
+    */
     private $files; 
+
+    /**
+    * Limete de tamanho do arquivo
+    *
+    * @var int
+    */
     private $size;
+
+    /**
+    * Diretorio que vai receber os arquivos de upload
+    *
+    * @var string
+    */
     private $dir;
+
+    /**
+    * Set arquivos
+    *
+    * @param array $files return erro se não houver arquivos
+    */
     public function __construct(array $files)
     {
         if(isset($files)){
@@ -16,36 +48,73 @@ class Upload
         }        
     } 
 
-    // setando o tamanho máximo do arquivo
+    /**
+    * Set tamanho de arquivos
+    *
+    * @param int $size
+    */
     public function setSize($size)
     {
         $this->size = $size;
     }
-    // seta o diretorio onde os arquivos vão ser salvos na aplicação
+
+    /**
+    * Set diretorio de upload dos arquivos
+    *
+    * @param string $dir
+    */
     public function setDir($dir)
     {
         $this->dir = $dir;
     }
-    // return o limete de tamanho de arquivo definido
+
+    /**
+    * Get tamanho arquivo
+    *
+    * @return int com tamanho de arquivo permitidos
+    */
     private function getSize()
     {
         return $this->size;
     }
-    // retorn o o diretorio onde os aquivos vão ser salvos
+
+    /**
+    * Get diretorio
+    *
+    * @return string com onde os arquivos serão salvos
+    */
     private function getDir()
     {
         return $this->dir;
     }
-    // return total de arquivos
+
+    /**
+    * Get total de arquivos
+    *
+    * @return int com total de arquivos selecionados
+    */
     public function totalFiles()
     {
         $totalFiles = count($this->files['name']);
         return $totalFiles;
     }  
+
+    /**
+    * Get codigo unico
+    *
+    * @return int codigo unico para renomear arquivo
+    */
     private function getUniqid()
     {
         return md5(uniqid(rand(), true)) . '.';
     }
+
+    /**
+    * Retorna lista de nomes de arquivos do upload
+    * Essa lista pode ser salva no seu banco de dados 
+    *
+    * @return array
+    */
     private function upload()
     {   
         $suporteIMG = array (IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
@@ -55,59 +124,25 @@ class Upload
             $ext = end($tmpEX);    
             $nome_final =  $this-> getUniqid(). $ext;  
            if($this->getSize() >= $this->files['size'][$i] && in_array($this->files['type'][$i] , array('image/gif','image/jpeg', 'image/jpg', 'image/png'))):
-                if(move_uploaded_file($this->files['tmp_name'][$i],'../src'. '/' . $nome_final )):
-                    array_push($errorFiles, "ER01");
+                if(move_uploaded_file($this->files['tmp_name'][$i], $this->getDir(). '/' . $nome_final )):
+                    array_push($errorFiles, $nome_final."|");
                 endif;
-                if (!in_array(  exif_imagetype($nome_final) , $suporteIMG) ) :
-                    array_push($errorFiles, "ER00");
+                if (!in_array(  exif_imagetype($this->getDir(). '/' .$nome_final) , $suporteIMG) ) : 
+                    // Caso o cabeçalho arquivo esteja alterado o mesmo é removido imediatamente da pasta de upload
                     unlink($nome_final);
-                endif;
-           else:
-                array_push($errorFiles, "ER00");
+                endif;  
            endif; 
         }
         return $errorFiles;
     }
+
+    /**
+    * Inicia o upload
+    *
+    * @return array
+    */
     public function startUpload()
     {
        return $this->upload();
     }
 }
-
-
-
-
-    if(isset($_FILES['file'])):
-        $upload = new upload($_FILES['file']);  
-        $upload->setSize(1000);  
-        $resultato = $upload->startUpload();
-        if(in_array('ER00', $resultato)):
-            echo  'Um ou mais arquivos pode não ter enviado. Verifique se o arquivo é uma image ou se é maior que 1MB';
-        else:
-            echo 'Upload realizado com sucesso';
-        endif;
-    endif;
-    
- 
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
-<link rel="stylesheet" href="style.css">
-<title>CLass testes</title>
-</head>
-<body>
- <form action="../src/Upload.php" method="post" enctype="multipart/form-data" >
-	<input type="file" name="file[]" multiple>
-	<input type="submit">
-</form>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
-</body>
-</html>
